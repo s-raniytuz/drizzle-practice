@@ -1,9 +1,7 @@
-import {UsersTable} from "./db/UsersTable";
-
 require('dotenv').config();
 import {User} from "./models/User";
-import {UserController} from "./controllers/UserController";
 import {UserService} from "./services/UserService";
+import {IService} from "./base/IService";
 
 const user = new User({
   name: "Vadim10",
@@ -14,7 +12,7 @@ const user = new User({
 async function main() {
 
   try {
-    const Service = await new UserService(user).Init();
+    const Service: IService = await new UserService(user).Init();
 
     await Service.Insert()
 
