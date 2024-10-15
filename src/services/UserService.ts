@@ -3,21 +3,22 @@ import {IService} from "../base/IService";
 import {User} from "../models/User";
 import {UsersTable} from "../db/UsersTable";
 
-export class UserService implements IService {
-  public DatabaseClient: DrizzleClient | undefined;
+export class UserService implements IService<User> {
+  private DatabaseClient: DrizzleClient | undefined;
+  private Entity: User;
   public Table: UsersTable;
-  public User: User;
 
   public async Insert() {
 
     if(this.DatabaseClient && this.DatabaseClient.db) {
-      this.Table.ZodInsertSchema.parse(this.User)
+      this.Table.ZodInsertSchema.parse(this.Entity)
 
-      await this.DatabaseClient.db.insert(this.Table.Schema).values(this.User);
+      await this.DatabaseClient.db.insert(this.Table.Schema).values(this.Entity);
+      console.log('done')
 
     } else {
 
-      throw new Error("Service is not initialized.");
+      throw new Error("Service is not initialized. Call Service.Init()");
 
     }
   }
@@ -27,8 +28,12 @@ export class UserService implements IService {
     return this
   }
 
+  public SetEntity(entity: User) {
+    this.Entity = entity;
+  }
+
   constructor(user: User) {
     this.Table = new UsersTable()
-    this.User = user
+    this.Entity = user
   }
 }
